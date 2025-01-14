@@ -1,0 +1,2 @@
+class TooFewPacketsInFlowException(Exception):
+    pass
