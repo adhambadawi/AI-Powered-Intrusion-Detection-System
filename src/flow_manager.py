@@ -2,12 +2,12 @@ from scapy.all import IP, TCP, UDP
 from datetime import datetime
 from data_models.flow import Flow
 from data_models.flow_packet import FlowPacket, Direction
-from signal_manager import SignalManager
 
 class FlowManager:
-    def __init__(self, signal_manager: SignalManager, ipv4_address: str):
+    """The FlowManager class is responsible for receiving packet-level data and sorting them into flows
+    """
+    def __init__(self, ipv4_address: str):
         self._flows = {}
-        self._signal_manager = signal_manager
         self._ipv4_address = ipv4_address
 
     def _process_packet(self, packet) -> FlowPacket:
@@ -43,7 +43,7 @@ class FlowManager:
 
         return None
     
-    def _get_segment_size(self, packet):
+    def _get_segment_size(self, packet) -> int:
         """Get the segment size of a packet
 
         Args:
@@ -98,4 +98,11 @@ class FlowManager:
             
             self._flows[key].packets.append(flow_packet)
             self._flows[key].last_packet_timestamp = flow_packet.arrival_time
-            self._signal_manager.process_input(self._flows[key])
+
+    def get_flows(self) -> tuple[Flow]:
+        """Get all current flows
+
+        Returns:
+            tuple[Flow]: Collection of Flow objects
+        """
+        return self._flows.values()

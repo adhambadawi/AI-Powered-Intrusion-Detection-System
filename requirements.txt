@@ -1,1 +1,5 @@
 scapy
+APScheduler
+scikit-learn==1.6.0
+joblib
+pandas
