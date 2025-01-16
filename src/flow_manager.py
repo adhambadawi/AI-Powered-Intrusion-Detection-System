@@ -1,14 +1,15 @@
 from scapy.all import IP, TCP, UDP
-from datetime import datetime
+from time import time_ns
 from data_models.flow import Flow
 from data_models.flow_packet import FlowPacket, Direction
 
 class FlowManager:
     """The FlowManager class is responsible for receiving packet-level data and sorting them into flows
     """
-    def __init__(self, ipv4_address: str):
+    def __init__(self, ipv4_address: str, flow_mutex):
         self._flows = {}
         self._ipv4_address = ipv4_address
+        self._flow_mutex = flow_mutex
 
     def _process_packet(self, packet) -> FlowPacket:
         """Convert raw packet to instance of flow packet data class
@@ -36,7 +37,7 @@ class FlowManager:
                 destination_ip,
                 source_port,
                 destination_port,
-                datetime.now().microsecond,
+                time_ns() // 1_000,
                 len(packet),
                 self._get_segment_size(packet)
             )
@@ -83,21 +84,22 @@ class FlowManager:
             return
         
         flow_packet = self._process_packet(packet)
-        key = self._get_flow_key(flow_packet)
-        if key:
-            if key not in self._flows:
-                self._flows[key] = Flow(
-                    [],
-                    key[1],
-                    key[2],
-                    key[3],
-                    key[4],
-                    flow_packet.arrival_time,
-                    flow_packet.arrival_time
-                )
-            
-            self._flows[key].packets.append(flow_packet)
-            self._flows[key].last_packet_timestamp = flow_packet.arrival_time
+        if flow_packet:
+            key = self._get_flow_key(flow_packet)
+            with self._flow_mutex:
+                if key not in self._flows:
+                    self._flows[key] = Flow(
+                        [],
+                        key[1],
+                        key[2],
+                        key[3],
+                        key[4],
+                        flow_packet.arrival_time,
+                        flow_packet.arrival_time
+                    )
+                
+                self._flows[key].packets.append(flow_packet)
+                self._flows[key].last_packet_timestamp = flow_packet.arrival_time
 
     def get_flows(self) -> tuple[Flow]:
         """Get all current flows

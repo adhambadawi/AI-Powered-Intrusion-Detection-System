@@ -2,6 +2,7 @@ import socket
 import json
 import joblib
 
+from threading import Lock
 from apscheduler.schedulers.background import  BackgroundScheduler
 from scapy.all import sniff
 from flow_manager import FlowManager
@@ -21,9 +22,11 @@ if __name__ == "__main__":
 
     model = joblib.load(MODEL_PATH)
 
+    flow_mutex = Lock()
+
     alert_manager = AlertManager()
-    flow_manager = FlowManager(ipv4_address)
-    signal_manager = SignalManager(flow_manager, alert_manager, model, config["attack_probability_threshold"])
+    flow_manager = FlowManager(ipv4_address, flow_mutex)
+    signal_manager = SignalManager(flow_manager, alert_manager, model, flow_mutex, config["attack_probability_threshold"])
 
     scheduler = BackgroundScheduler()
     scheduler.add_job(signal_manager.scan_flows, "interval", seconds=config["scan_frequency"])
