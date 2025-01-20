@@ -2,7 +2,6 @@ import pandas as pd
 
 from alert_manager import AlertManager
 from flow_manager import FlowManager
-from data_models.flow import Flow
 from data_models.flow_packet import Direction
 from exceptions.exceptions import TooFewPacketsInFlowException
 from metrics import segment_size, interarrival_time, packet_length

@@ -3,7 +3,7 @@ from data_models.flow_packet import FlowPacket
 
 @dataclass
 class Flow:
-    """Class for representing packets in a flow"""
+    """Class for representing a flow"""
     packets: list[FlowPacket]
     source_ip: str
     destination_ip: str
