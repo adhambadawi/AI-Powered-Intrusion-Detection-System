@@ -1,0 +1,114 @@
+[INFO] Loading training and testing datasets...
+[DEBUG] Initial training dataset: 28 features
+[DEBUG] Initial testing dataset: 28 features
+[INFO] Training dataset after initial load: 22 duplicate rows found out of 3251917 total rows.
+[INFO] Testing dataset after initial load: 1 duplicate rows found out of 489980 total rows.
+[INFO] Analyzing feature importance using Random Forest...
+[DEBUG] Top 28 Features by Importance:
+Average_Packet_Size            0.084375
+Bwd_Packet_Length_Std          0.083542
+Packet_Length_Std              0.073939
+Bwd_Packet_Length_Mean         0.066471
+Packet_Length_Variance         0.064536
+Destination_Port               0.060483
+Fwd_Packet_Length_Max          0.054791
+Packet_Length_Mean             0.052228
+Subflow_Bwd_Bytes              0.049686
+Avg_Bwd_Segment_Size           0.045911
+Fwd_Packet_Length_Mean         0.038544
+Total_Length_of_Fwd_Packets    0.035800
+Max_Packet_Length              0.034724
+Bwd_Packet_Length_Max          0.030361
+Subflow_Fwd_Bytes              0.028975
+Total_Length_of_Bwd_Packets    0.028057
+Bwd_Header_Length              0.023267
+Flow_IAT_Mean                  0.019501
+Fwd_IAT_Std                    0.018621
+Fwd_IAT_Max                    0.016943
+Total_Fwd_Packets              0.016727
+PSH_Flag_Count                 0.014567
+Subflow_Fwd_Packets            0.013050
+Fwd_Header_Length.1            0.012588
+Fwd_Header_Length              0.010471
+act_data_pkt_fwd               0.009375
+Flow_IAT_Std                   0.008922
+Idle_Mean                      0.003546
+dtype: float64
+[INFO] Feature importance plot saved as 'output\feature_importances.png'.
+[INFO] Removing features with importance below 0.01...
+[DEBUG] Features removed due to low importance (Importance < 0.01):
+act_data_pkt_fwd: 0.009375
+Flow_IAT_Std: 0.008922
+Idle_Mean: 0.003546
+[INFO] Reduced feature set: 25 features remaining (from 28).
+[INFO] Removing features with importance below 0.01...
+[DEBUG] Features removed due to low importance (Importance < 0.01):
+act_data_pkt_fwd: 0.009375
+Flow_IAT_Std: 0.008922
+Idle_Mean: 0.003546
+[INFO] Reduced feature set: 25 features remaining (from 28).
+[INFO] Training dataset after low-importance feature removal: 43563 duplicate rows found out of 3251917 total rows.
+[INFO] Testing dataset after low-importance feature removal: 3661 duplicate rows found out of 489980 total rows.
+[INFO] Removing features with correlation greater than 0.95...
+[DEBUG] Features removed due to high correlation:
+Packet_Length_Std: Correlated with ['Avg_Bwd_Segment_Size']
+Max_Packet_Length: Correlated with ['Packet_Length_Std']
+Bwd_Packet_Length_Max: Correlated with ['Avg_Bwd_Segment_Size', 'Packet_Length_Std', 'Max_Packet_Length']
+Bwd_Packet_Length_Std: Correlated with ['Avg_Bwd_Segment_Size', 'Packet_Length_Std', 'Max_Packet_Length', 'Bwd_Packet_Length_Max']
+Average_Packet_Size: Correlated with ['Packet_Length_Std']
+Bwd_Packet_Length_Mean: Correlated with ['Avg_Bwd_Segment_Size', 'Packet_Length_Std', 'Bwd_Packet_Length_Max', 'Bwd_Packet_Length_Std']
+Subflow_Bwd_Bytes: Correlated with ['Total_Length_of_Bwd_Packets']
+Packet_Length_Mean: Correlated with ['Avg_Bwd_Segment_Size', 'Packet_Length_Std', 'Average_Packet_Size', 'Bwd_Packet_Length_Mean']
+Subflow_Fwd_Packets: Correlated with ['Total_Length_of_Bwd_Packets', 'Subflow_Bwd_Bytes']
+Subflow_Fwd_Bytes: Correlated with ['Total_Length_of_Fwd_Packets']
+Total_Fwd_Packets: Correlated with ['Total_Length_of_Bwd_Packets', 'Subflow_Bwd_Bytes', 'Subflow_Fwd_Packets']
+Fwd_IAT_Std: Correlated with ['Fwd_IAT_Max']
+Fwd_Header_Length: Correlated with ['Fwd_Header_Length.1']
+[INFO] Reduced feature set: 12 features remaining (from 25).
+[INFO] Removing features with correlation greater than 0.95...
+[DEBUG] Features removed due to high correlation:
+Max_Packet_Length: Correlated with ['Packet_Length_Std']
+Bwd_Packet_Length_Max: Correlated with ['Avg_Bwd_Segment_Size']
+Bwd_Packet_Length_Std: Correlated with ['Bwd_Packet_Length_Max']
+Bwd_Packet_Length_Mean: Correlated with ['Avg_Bwd_Segment_Size', 'Bwd_Packet_Length_Max']
+Subflow_Bwd_Bytes: Correlated with ['Total_Length_of_Bwd_Packets']
+Packet_Length_Mean: Correlated with ['Average_Packet_Size']
+Subflow_Fwd_Packets: Correlated with ['Total_Length_of_Bwd_Packets', 'Subflow_Bwd_Bytes']
+Subflow_Fwd_Bytes: Correlated with ['Total_Length_of_Fwd_Packets']
+Total_Fwd_Packets: Correlated with ['Total_Length_of_Bwd_Packets', 'Subflow_Bwd_Bytes', 'Subflow_Fwd_Packets']
+Fwd_Header_Length: Correlated with ['Fwd_Header_Length.1']
+[INFO] Reduced feature set: 15 features remaining (from 25).
+[INFO] Training dataset after correlation-based feature removal: 50028 duplicate rows found out of 3251917 total rows.
+[INFO] Testing dataset after correlation-based feature removal: 3675 duplicate rows found out of 489980 total rows.
+[DEBUG] Final training dataset: 12 features
+[DEBUG] Final testing dataset: 15 features
+[INFO] Aligning features between training and testing datasets...
+[DEBUG] Adding missing feature to training dataset: Packet_Length_Std (default=0)
+[DEBUG] Adding missing feature to training dataset: Average_Packet_Size (default=0)
+[DEBUG] Adding missing feature to training dataset: Fwd_IAT_Std (default=0)
+[INFO] Feature alignment completed. Training dataset: 15 features, Testing dataset: 15 features.
+[INFO] Final training dataset after duplicate removal: 3201889 rows.
+[INFO] Final testing dataset after duplicate removal: 486305 rows.
+[INFO] Processed training data saved to output/processed_train_data.csv
+[INFO] Processed testing data saved to output/processed_test_data.csv
+[INFO] Training Random Forest model...
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00    406511
+           1       0.99      1.00      0.99     83469
+
+    accuracy                           1.00    489980
+   macro avg       1.00      1.00      1.00    489980
+weighted avg       1.00      1.00      1.00    489980
+
+
+Confusion Matrix:
+[[405742    769]
+ [   225  83244]]
+
+ROC-AUC Score: 0.9999241935708697
+[INFO] Random Forest model saved at output/all_attacks_random_forest_model.pkl
+[INFO] ROC Curve saved at output/all_attacks_rf_roc_curve.png
+[INFO] Feature engineering and Random Forest model training completed.
