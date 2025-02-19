@@ -25,10 +25,14 @@ class FlowManager:
             destination_ip = packet[IP].dst
             source_port = packet.sport
             destination_port = packet.dport
+            flags = set()
             if destination_ip == self._ipv4_address:
                 direction = Direction.FORWARD
             else:
                 direction = Direction.BACKWARD
+            
+            if protocol == "TCP" and "P" in packet[TCP].flags:
+                flags.add("PSH")
             
             return FlowPacket(
                 protocol,
@@ -39,7 +43,8 @@ class FlowManager:
                 destination_port,
                 time_ns() // 1_000,
                 len(packet),
-                self._get_segment_size(packet)
+                self._get_segment_size(packet),
+                flags
             )
 
         return None

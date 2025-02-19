@@ -32,7 +32,8 @@ def packet_length(flow: list[FlowPacket], direction: Direction=Direction.BIDIREC
         "sum": sum(packet_lengths),
         "max": max(packet_lengths),
         "mean": mean(packet_lengths),
-        "variance": variance(packet_lengths)
+        "variance": variance(packet_lengths),
+        "stdev": stdev(packet_lengths)
     }
 
 def interarrival_time(flow: list[FlowPacket], direction: Direction=Direction.BIDIRECTIONAL) -> dict:
@@ -50,7 +51,7 @@ def interarrival_time(flow: list[FlowPacket], direction: Direction=Direction.BID
         raise TooFewPacketsInFlowException()
     
     interarrival_times = [filtered_packets[i].arrival_time - filtered_packets[i - 1].arrival_time for i in range(1, len(filtered_packets))]
-    return {"mean": mean(interarrival_times), "stdev": stdev(interarrival_times)}
+    return {"mean": mean(interarrival_times), "stdev": stdev(interarrival_times), "max": interarrival_times}
 
 def segment_size(flow: list[FlowPacket], direction: Direction=Direction.BIDIRECTIONAL) -> dict:
     """Calculate metrics for segment size of packets in a flow
@@ -68,3 +69,18 @@ def segment_size(flow: list[FlowPacket], direction: Direction=Direction.BIDIRECT
     
     segment_sizes = [packet.segment_size for packet in filtered_packets]
     return {"mean": mean(segment_sizes)}
+
+def header_length(flow: list[FlowPacket], direction: Direction=Direction.BIDIRECTIONAL) -> int:
+    filtered_packets = filter_packets(flow, direction)
+    if len(filtered_packets) < 1:
+        raise TooFewPacketsInFlowException()
+    
+    return sum(packet.size - packet.segment_size for packet in filtered_packets)
+
+def flag_count(flow: list[FlowPacket], flag: str, direction: Direction=Direction.BIDIRECTIONAL) -> int:
+    filtered_packets = filter_packets(flow, direction)
+    return sum(1 for packet in filtered_packets if flag in packet.flags)
+
+def packet_count(flow: list[FlowPacket], direction: Direction=Direction.BIDIRECTIONAL) -> int:
+    filtered_packets = filter_packets(flow, direction)
+    return len(filtered_packets)

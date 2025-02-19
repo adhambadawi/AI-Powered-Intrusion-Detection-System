@@ -18,3 +18,4 @@ class FlowPacket:
     arrival_time: int
     size: int
     segment_size: int
+    flags: set
