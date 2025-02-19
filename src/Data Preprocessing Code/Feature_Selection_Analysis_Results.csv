@@ -1,0 +1,9 @@
+N (Features),Duplicates Removed After Feature Reduction,Attack Rows of the Duplicates Removed,Dataset Size After Balancing,Post-SMOTE Duplicates Removed,Final Training Data Feature Size
+20,1708534,354611,1186163,43,21
+25,1016015,124789,1921520,4608,26
+30,59061,8272,3270607,221,31
+31,18264,7043,3333967,171,32
+32,18264,7043,3333977,161,33
+33,18254,7043,3333981,173,34
+34,18196,7042,3334069,175,35
+35,10921,5126,3342083,735,36
