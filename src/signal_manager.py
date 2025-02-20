@@ -9,11 +9,9 @@ from metrics import segment_size, interarrival_time, packet_length, flag_count, 
 
 FEATURES = [
     "Avg_Bwd_Segment_Size",
-    "Average_Packet_Size",
+    "Packet_Length_Variance",
     "Total_Length_of_Bwd_Packets",
     "Destination_Port",
-    "Fwd_IAT_Std",
-    "Packet_Length_Variance",
     "PSH_Flag_Count",
     "Total_Length_of_Fwd_Packets",
     "Bwd_Header_Length",
@@ -22,9 +20,11 @@ FEATURES = [
     "Fwd_Header_Length.1",
     "Fwd_IAT_Max",
     "Fwd_Packet_Length_Mean",
+    "Flow_IAT_Mean",
     "Packet_Length_Std",
     "Flow_IAT_Std",
-    "Flow_IAT_Mean"
+    "Average_Packet_Size",
+    "Fwd_IAT_Std"
 ]
 
 class SignalManager:

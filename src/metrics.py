@@ -51,7 +51,7 @@ def interarrival_time(flow: list[FlowPacket], direction: Direction=Direction.BID
         raise TooFewPacketsInFlowException()
     
     interarrival_times = [filtered_packets[i].arrival_time - filtered_packets[i - 1].arrival_time for i in range(1, len(filtered_packets))]
-    return {"mean": mean(interarrival_times), "stdev": stdev(interarrival_times), "max": interarrival_times}
+    return {"mean": mean(interarrival_times), "stdev": stdev(interarrival_times), "max": max(interarrival_times)}
 
 def segment_size(flow: list[FlowPacket], direction: Direction=Direction.BIDIRECTIONAL) -> dict:
     """Calculate metrics for segment size of packets in a flow
@@ -69,6 +69,23 @@ def segment_size(flow: list[FlowPacket], direction: Direction=Direction.BIDIRECT
     
     segment_sizes = [packet.segment_size for packet in filtered_packets]
     return {"mean": mean(segment_sizes)}
+
+def idle_time(flow: list[FlowPacket], direction: Direction=Direction.BIDIRECTIONAL, idle_threshold: int=1_000_000) -> dict:
+    filtered_packets = filter_packets(flow, direction)
+    if len(filtered_packets) < 1:
+        raise TooFewPacketsInFlowException()
+    
+    idle_times = []
+    for i in range(1, len(filtered_packets)):
+        interarrival_time = filtered_packets[i].arrival_time - filtered_packets[i - 1].arrival_time
+        if interarrival_time >= idle_threshold:
+            idle_times.append(interarrival_time)
+
+    if len(idle_times) < 1:
+        raise TooFewPacketsInFlowException()
+    
+    return {"mean": mean(idle_times), "min": min(idle_times)}
+
 
 def header_length(flow: list[FlowPacket], direction: Direction=Direction.BIDIRECTIONAL) -> int:
     filtered_packets = filter_packets(flow, direction)
