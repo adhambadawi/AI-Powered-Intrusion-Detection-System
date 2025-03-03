@@ -6,10 +6,10 @@ import customtkinter
 from threading import Lock, Thread
 from apscheduler.schedulers.background import  BackgroundScheduler
 from scapy.all import sniff
-from flow_manager import FlowManager
-from signal_manager import SignalManager
-from alert_manager import AlertManager
-from display_gui import DisplayGUI
+from src.flow_manager import FlowManager
+from src.signal_manager import SignalManager
+from src.alert_manager import AlertManager
+from src.display_gui import DisplayGUI
 
 CONFIG_PATH = "src/config.json"
 MODEL_PATH = "src/models/all_attacks_random_forest_model_v1.pkl"
