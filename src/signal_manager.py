@@ -85,7 +85,7 @@ class SignalManager:
                 ]], columns=FEATURES) # Input vector for model
 
                 attack_probability = self._predict_attack_probability(input_vector)
-                if self._predict_attack_probability(input_vector) >= self._attack_probability_threshold:
+                if self._predict_attack_probability(input_vector) >= self._display_gui.get_settings()["attack_probability_threshold"]:
                     self._display_gui.alert_generated(flow, attack_probability)
                     self._alert_manager.generate_alert(flow)
 

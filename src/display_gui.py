@@ -3,6 +3,47 @@ import customtkinter
 from tkinter import messagebox
 from data_models.flow import Flow
 
+class SettingsWindow(customtkinter.CTkToplevel):
+    def __init__(self, parent, settings: dict):
+        super().__init__(parent)
+        self.parent = parent
+        self.title("Settings")
+        self.geometry("300x200")
+
+        # Threshold value (decimal between 0 and 1)
+        self.attack_probability_threshold_label = customtkinter.CTkLabel(self, text="Attack Probability Threshold:")
+        self.attack_probability_threshold_label.pack(pady=(10, 0))
+        self.attack_probability_threshold_entry = customtkinter.CTkEntry(self)
+        self.attack_probability_threshold_entry.pack(pady=5)
+        self.attack_probability_threshold_entry.insert(0, settings["attack_probability_threshold"])  # Default value
+
+        # Integer option (integer >= 1)
+        self.scan_frequency_label = customtkinter.CTkLabel(self, text="Scan Frequency:")
+        self.scan_frequency_label.pack(pady=(10, 0))
+        self.scan_frequency_entry = customtkinter.CTkEntry(self)
+        self.scan_frequency_entry.pack(pady=5)
+        self.scan_frequency_entry.insert(0, settings["scan_frequency"])  # Default value
+
+        # Save Button
+        self.save_button = customtkinter.CTkButton(self, text="Save", command=self.save_settings)
+        self.save_button.pack(pady=10)
+
+    def save_settings(self):
+        try:
+            attack_probability_threshold = float(self.attack_probability_threshold_entry.get())
+            scan_frequency = int(self.scan_frequency_entry.get())
+
+            if not (0 <= attack_probability_threshold <= 1):
+                raise ValueError("Threshold must be between 0 and 1.")
+            if scan_frequency < 1:
+                raise ValueError("Integer must be ≥ 1.")
+
+            self.parent.handle_update_settings({"attack_probability_threshold": attack_probability_threshold, "scan_frequency": scan_frequency})
+            self.destroy()  # Close window after saving
+
+        except ValueError as e:
+            print(f"Error: {e}")
+
 class FlowWindow(customtkinter.CTkScrollableFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -45,8 +86,13 @@ class DisplayGUI(customtkinter.CTk):
         self._active_flows_label.grid(row=0, column=0, pady=(20, 5))
         self._alerts_counter_label.grid(row=0, column=0, pady=(80, 5))
 
+        self.settings_button = customtkinter.CTkButton(self, text="Settings", command=self.open_settings)
+        self.settings_button.grid(row=1, column=0, padx=10, pady=10)
+
         self._flow_window = FlowWindow(master=self, width=500, corner_radius=0)
-        self._flow_window.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+        self._flow_window.grid(row=2, column=0, padx=10, pady=10, sticky="nsew")
+
+        self._settings = {"attack_probability_threshold": 0.95, "scan_frequency": 10}
 
     def alert_generated(self, flow: Flow, attack_probability: float):
         self._alerts += 1
@@ -58,3 +104,13 @@ class DisplayGUI(customtkinter.CTk):
         self._flow_window.clear()
         for flow, attack_probability in flows:
             self._flow_window.add_flow(flow, attack_probability)
+
+    def handle_update_settings(self, settings: dict):
+        self._settings = settings
+
+    def get_settings(self) -> dict:
+        return self._settings
+
+    def open_settings(self):
+        settings_window = SettingsWindow(self, self._settings)
+        settings_window.grab_set() 
