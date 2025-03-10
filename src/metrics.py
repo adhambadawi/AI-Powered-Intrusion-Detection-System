@@ -1,5 +1,5 @@
-from data_models.flow_packet import FlowPacket, Direction
-from exceptions.exceptions import TooFewPacketsInFlowException
+from src.data_models.flow_packet import FlowPacket, Direction
+from src.exceptions.exceptions import TooFewPacketsInFlowException
 from statistics import mean, stdev, variance
 
 def filter_packets(flow: list[FlowPacket], direction: Direction=Direction.BIDIRECTIONAL) -> list[FlowPacket]:

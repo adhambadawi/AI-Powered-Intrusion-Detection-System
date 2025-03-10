@@ -1,6 +1,6 @@
 import unittest
-from metrics import *
-from data_models.flow_packet import FlowPacket, Direction
+from src.metrics import *
+from src.data_models.flow_packet import FlowPacket, Direction
 
 class TestMetrics(unittest.TestCase):
     def test_filter_packets(self):

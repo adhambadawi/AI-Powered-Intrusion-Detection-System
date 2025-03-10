@@ -1,11 +1,14 @@
+import csv
+
 import pandas as pd
 
-from alert_manager import AlertManager
-from flow_manager import FlowManager
-from display_gui import DisplayGUI
-from data_models.flow_packet import Direction
-from exceptions.exceptions import TooFewPacketsInFlowException
-from metrics import segment_size, interarrival_time, packet_length, flag_count, header_length, packet_count
+from datetime import datetime
+from src.flow_manager import FlowManager
+from src.display_gui import DisplayGUI
+from src.data_models.flow_packet import Direction
+from src.data_models.alert import Alert
+from src.exceptions.exceptions import TooFewPacketsInFlowException
+from src.metrics import segment_size, interarrival_time, packet_length, flag_count, header_length, packet_count
 
 FEATURES = [
     "Avg_Bwd_Segment_Size",
@@ -31,9 +34,8 @@ class SignalManager:
     """The SignalManager class is responsible for preprocessing flow data into model inputs, generating
     signals using the model and passing signals to the AlertManager
     """
-    def __init__(self, flow_manager: FlowManager, alert_manager: AlertManager, model, flow_mutex, attack_probability_threshold: float, display_gui: DisplayGUI):
+    def __init__(self, flow_manager: FlowManager, model, flow_mutex, attack_probability_threshold: float, display_gui: DisplayGUI):
         self._flow_manager = flow_manager
-        self._alert_manager = alert_manager
         self._model = model
         self._flow_mutex = flow_mutex
         self._attack_probability_threshold = attack_probability_threshold
@@ -41,6 +43,14 @@ class SignalManager:
 
     def _predict_attack_probability(self, input_vector: pd.DataFrame) -> float:
         return self._model.predict_proba(input_vector)[0][1]
+    
+    def _log_alert(self, alert: Alert, output_path: str):
+        if output_path == "":
+            return # Don't attempt to log outputs if an output path isn't set
+        
+        with open(output_path, mode="a") as file:
+            writer = csv.writer(file)
+            writer.writerow(alert.to_csv())
 
     def scan_flows(self):
         """Generate signals for a each network flow
@@ -61,7 +71,6 @@ class SignalManager:
                     act_data_pkt_fwd = packet_count(flow.packets, Direction.FORWARD)
                 except TooFewPacketsInFlowException:
                     # Cannot continue if there are too few packets in the flow to calculate the necessary flow metrics
-                    flows.append((flow, "Not available"))
                     continue
                 
                 input_vector = pd.DataFrame([[
@@ -85,10 +94,10 @@ class SignalManager:
                 ]], columns=FEATURES) # Input vector for model
 
                 attack_probability = self._predict_attack_probability(input_vector)
-                if self._predict_attack_probability(input_vector) >= self._display_gui.get_settings()["attack_probability_threshold"]:
+                if attack_probability >= self._display_gui.get_settings()["attack_probability_threshold"]:
                     self._display_gui.alert_generated(flow, attack_probability)
-                    self._alert_manager.generate_alert(flow)
+                    self._log_alert(Alert(datetime.now(), attack_probability, flow), self._display_gui.get_settings()["alert_log_output_path"])
 
-                flows.append((flow, str(attack_probability)))
+                    flows.append((flow, str(attack_probability)))
 
             self._display_gui.update_flows(flows)

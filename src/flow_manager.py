@@ -1,7 +1,7 @@
 from scapy.all import IP, TCP, UDP
 from time import time_ns
-from data_models.flow import Flow
-from data_models.flow_packet import FlowPacket, Direction
+from src.data_models.flow import Flow
+from src.data_models.flow_packet import FlowPacket, Direction
 
 class FlowManager:
     """The FlowManager class is responsible for receiving packet-level data and sorting them into flows

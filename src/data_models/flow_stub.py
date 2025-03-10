@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from data_models.flow_packet import FlowPacket
+from src.data_models.flow_packet import FlowPacket
 
 @dataclass
 class FlowStub:
