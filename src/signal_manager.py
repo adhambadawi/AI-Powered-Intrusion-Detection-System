@@ -71,6 +71,7 @@ class SignalManager:
                     act_data_pkt_fwd = packet_count(flow.packets, Direction.FORWARD)
                 except TooFewPacketsInFlowException:
                     # Cannot continue if there are too few packets in the flow to calculate the necessary flow metrics
+                    flows.append((flow, 0))
                     continue
                 
                 input_vector = pd.DataFrame([[
@@ -98,6 +99,6 @@ class SignalManager:
                     self._display_gui.alert_generated(flow, attack_probability)
                     self._log_alert(Alert(datetime.now(), attack_probability, flow), self._display_gui.get_settings()["alert_log_output_path"])
 
-                    flows.append((flow, str(attack_probability)))
+                flows.append((flow, attack_probability))
 
             self._display_gui.update_flows(flows)

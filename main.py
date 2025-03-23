@@ -29,7 +29,7 @@ if __name__ == "__main__":
     flow_manager = FlowManager(ipv4_address, flow_mutex)
     signal_manager = SignalManager(flow_manager, model, flow_mutex, 0.95, display_gui)
     scheduler = BackgroundScheduler()
-    scheduler.add_job(signal_manager.scan_flows, "interval", seconds=10)
+    scheduler.add_job(signal_manager.scan_flows, "interval", seconds=45)
     scheduler.start()
 
     sniff_thread = Thread(target=sniff_packets, args=(flow_manager, ), daemon=True)
